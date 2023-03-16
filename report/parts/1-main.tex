@@ -1,0 +1,14 @@
+\section*{Activity 1}
+\begin{enumerate}
+    \item The most prevalent application protocol used is FTP, with 210/606 packages.
+    \item The IP address and port for the client is \texttt{192.168.56.1:54017}, and for the server it's \texttt{192.168.56.101:21}, as seen in package \texttt{1} (\texttt{SYN} from client to server).
+    \item As seen in the response arguments from package \texttt{4}, the server is running \texttt{Version 6.4/OpenBSD/Linux-ftpd-0.17}.
+    \item The flow on a TCP connection starts with the client sending a package with the \texttt{SYN} flag set to \texttt{1} to the server.\\
+    Therefore, the filter should select packages with the \texttt{SYN} flag sent from the client, that is, \texttt{tcp.flags.syn==1 and ip.src==192.168.56.1}.
+    \item As you can observe from the different flows, the client is trying to connect to the server with the FTP user \texttt{bro}, trying different paswords (by incrementing a counter) for the user and failing 30 times.
+\end{enumerate}
+
+\section*{Activity 2}
+\begin{enumerate}
+    \item
+\end{enumerate}
