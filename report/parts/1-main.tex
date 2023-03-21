@@ -1,6 +1,6 @@
 \section*{Activity 1}
 \begin{enumerate}
-    \item The most prevalent application protocol used is FTP, with 210/606 packages.
+    \item The most prevalent application protocol used is FTP, with 210 packages out of 606 total packages.
     \item The IP address and port for the client is \texttt{192.168.56.1:54017}, and for the server it's \texttt{192.168.56.101:21}, as seen in package \texttt{1} (\texttt{SYN} from client to server).
     \item As seen in the response arguments from package \texttt{4}, the server is running \texttt{Version 6.4/OpenBSD/Linux-ftpd-0.17}.
     \item The flow on a TCP connection starts with the client sending a package with the \texttt{SYN} flag set to \texttt{1} to the server.\\
@@ -10,5 +10,31 @@
 
 \section*{Activity 2}
 \begin{enumerate}
-    \item
+    \item As seen in \texttt{Statistics > Conversations}, there are 1055 TCP conversations and 1400 UDP conversations, involving the same two hosts: \texttt{192.168.5.51} (Host A) and \texttt{192.168.5.20} (Host B).
+    \item Host A seems to be probing for open ports in B (port scanning), as it's sending one and only one package to each port in B.
+    \item Host A is using \textbf{TCP SYN scan}, by sending TCP packages with the \texttt{SYN} flag and answering with a \texttt{RST}, the \textbf{TCP FIN scan}, by sending TCP packages with just the \texttt{FIN} flag, and the \textbf{UDP scan}, by sending UDP packages.
+    \item Depending on each port forwarding technique, we find if the port was open with different responses:
+    \begin{enumerate}
+        \item \textbf{TCP SYN scan:} If the host replies with \texttt{RST} or an ICMP unreachable error the port is closed or filtered.\\
+        By using the filter \texttt{tcp and ip.src==192.168.5.20 and tcp.flags.reset==0} we can observe the TCP responses from Host B where it didn't return any of that, meaning that the port was open.\\
+        We can find on packages \texttt{15} and \texttt{122} that port \texttt{80} is open.
+        \item \textbf{TCP FIN scan:} If the port is open, it will return no response at all.\\
+        By using the filter \texttt{ip.src==192.168.5.51 and tcp.flags.fin==1} we can see all the times the technique was used.\\
+        Only packages \texttt{123} and \texttt{1234}, both to port \texttt{80}, received no response, confirming that port \texttt{80} is open.
+        \item \textbf{UDP scan:} Any response implies that the port is open.\\
+        By using the filter \texttt{ip.src==192.168.5.20 and udp and not icmp} we can see witch UDP packages received a response.\\
+        No package filled that requirements, therefore no extra port is open.
+    \end{enumerate}
+    The result is that only port \texttt{80} (of the ones probed) is open.
+\end{enumerate}
+
+
+\section*{Activity 3}
+\begin{enumerate}
+    \item To display all HTTP conversations on the trace, you can use the filter \texttt{http}.
+    \item The user must be the one that sends the \texttt{GET} request, \texttt{192.168.5.51}, and the server the one who answers, \texttt{192.168.5.20}.
+    \item On package \texttt{2141} you can observe a \texttt{GET} request answered in package \texttt{2145} with a \texttt{200 OK}, meaning the request was successful.\\
+    Inside that first package you can find in the \texttt{Authorization} field the following value: \texttt{Basic cHJvZmVzb3I6Y2xhdmVwcm9mZXNvcg==}, which translates to the credentials \texttt{profesor:claveprofesor}.\\
+    Other password can be found in package \texttt{2245} (answered with a \texttt{200 OK} in \texttt{2259}): \texttt{profesor2:facil}.\\
+    The rest of passwords attempts returned a \texttt{401 Authorization required}, meaning they were not correct.
 \end{enumerate}
